@@ -1,22 +1,62 @@
 <html>
 	<head>
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-			integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-			crossorigin=""/>
-			<!-- Make sure you put this AFTER Leaflet's CSS -->
-			<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-			integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-			crossorigin=""></script>
-			<style type="text/css">
-					#mapid {position:absolute; top:0; right: 0; bottom: 0; left: 0;}
-			</style>
-		</head>
-		<body>
-			<div id="mapid"></div>
-			<script type="text/javascript">
-				var mymap = L.map('mapid').setView([51.505, -0.09], 13);
-				L.tileLayer('https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}.png?key=M700xUrAG41SjG6Sx38W', {
-				}).addTo(mymap);
-			</script>
-		</body>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+		<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+		<script src="https://unpkg.com/esri-leaflet@2.2.4/dist/esri-leaflet.js" integrity="sha512-tyPum7h2h36X52O2gz+Pe8z/3l+Y9S1yEUscbVs5r5aEY5dFmP1WWRY/WLLElnFHa+k1JBQZSCDGwEAnm2IxAQ==" crossorigin=""></script>
+		<link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.css" integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ==" crossorigin="">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+		<script src="https://unpkg.com/esri-leaflet-geocoder@2.2.14/dist/esri-leaflet-geocoder.js" integrity="sha512-uK5jVwR81KVTGe8KpJa1QIN4n60TsSV8+DPbL5wWlYQvb0/nYNgSOg9dZG6ViQhwx/gaMszuWllTemL+K+IXjg==" crossorigin=""></script>
+		<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+		<style type="text/css">
+		#mapid {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="mapid">
+		</div>
+		<script type="text/javascript">
+		var map = L.map('mapid').fitWorld();
+		L.tileLayer('https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}.png?key=M700xUrAG41SjG6Sx38W', {}).addTo(map);
+		var searchControl = L.esri.Geocoding.geosearch().addTo(map); // CI SIAMO CAPITi
+		var results = L.layerGroup().addTo(map); 
+		searchControl.on('results', function(data) {
+			results.clearLayers();
+			for (var i = data.results.length - 1; i >= 0; i--) {
+				results.addLayer(L.marker(data.results[i].latlng));
+			}
+		});
+		L.esri.featureLayer({
+    		url: '//overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[amenity=restaurant];out;'
+  		}).addTo(map);
+		/*
+		L.Routing.control({
+			waypoints: [
+				L.latLng(57.74, 11.94),
+				L.latLng(57.6792, 11.949)
+			]
+		}).addTo(map);
+		*/
+		/*
+		//GEOLOCAZIONE
+		function onLocationFound(e) {
+			var radius = e.accuracy / 2;
+			L.marker(e.latlng).addTo(map)
+				.bindPopup("You are within " + radius + " meters from this point").openPopup();
+			L.circle(e.latlng, radius).addTo(map);
+		}
+			function onLocationError(e) {
+				alert(e.message);
+		}
+		map.on('locationfound', onLocationFound);
+		map.on('locationerror', onLocationError);
+		map.locate({setView: true, maxZoom: 16});
+		*/
+		</script>
+	</body>
 </html>
