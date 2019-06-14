@@ -31,10 +31,8 @@
 				results.addLayer(L.marker(data.results[i].latlng));
 			}
 		});
-		L.esri.featureLayer({
-    		url: '//overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[amenity=restaurant];out;'
-  		}).addTo(map);
 		/*
+		//NAVIGAZIONE
 		L.Routing.control({
 			waypoints: [
 				L.latLng(57.74, 11.94),
